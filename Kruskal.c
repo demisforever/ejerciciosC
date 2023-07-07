@@ -94,7 +94,7 @@ int main()
 
     printf("Arbol completo: \n");
     printf("costo| v Arista v \n");
-
+// lo que sea
     arista aristas[10] = {arista1, arista2, arista3, arista4, arista5, arista6, arista7, arista8, arista9, arista10};
     int i;
     for (i = 0; i < 10; i++)
