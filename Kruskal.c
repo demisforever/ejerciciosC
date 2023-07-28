@@ -4,8 +4,6 @@
 #include <stdbool.h>
 #define VERTICES 10
 
-typedef int tipo_nombre;
-typedef int tipo_elemento;
 typedef int vertice;
 
 typedef struct _ARISTA
@@ -100,16 +98,17 @@ int main()
 
     for (j = 0; j < lenghtAristas; j++)
     {
-        if (existe(aristas[j].u, vertices) && !existe(aristas[j].v, vertices)) // Si el vertice u de todas las aristas es igual a alguno de los vertices de todas las aristas y el otro vertice v no es igual.
+        // condición: en aristasResultante agregamos el arista donde, unos de sus vertices no existe en la lista de vertices pero el otro si existe. 
+        if (existe(aristas[j].u, vertices) && !existe(aristas[j].v, vertices))
         {
-            // El primer vertice de [j].u que analizamos es 1 contra 4 y 6 (esto se analiza una vez ordenado las aristas), al no haber conincidencia analizamos 4 y asi suc..
+            // ejemplo: aristas[j].u es 3 y dentro del vertices[] ya existe 1 y 3, entonces se agrega a vertices[], aristas[j].v que es 6 y no existe.
             vertices[x] = aristas[j].v; // Almacenamos en vertices a partir del indice 2 en adelante los vertices que cumplen la condicion.
-            x++;                        // Incrementeamos la variable x una vez encontrada la condicion del if.
+            x++;                        // Incrementeamos la variable x una vez encontrado el vertice.
 
             aristasResultante[r] = aristas[j]; // Almacenamos en arista resultante el resultado dado hasta el momento.
             r++;
-            j = 0;
-            continue;
+            j = 0; // reiniciamos la busqueda en todo el array de aristas nuevamente
+            continue; // finaliza la iteración en curso, con j = 0 para que reinicien la busqueda
         }
         else if (existe(aristas[j].v, vertices) && !existe(aristas[j].u, vertices)) // Si el vertice v de todas las aristas es igual a alguno de los vertices de todas las aristas y el otro vertice v no es igual.
         {
@@ -119,8 +118,8 @@ int main()
 
             aristasResultante[r] = aristas[j];
             r++;
-            j = 0;
-            continue;
+            j = 0; // reiniciamos la busqueda en todo el array de aristas nuevamente
+            continue;  //finaliza la iteración en curso, con j = 0 para que reinicien la busqueda
         }
     }
 
