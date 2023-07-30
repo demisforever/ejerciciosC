@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 #define VERTICES 10
+#define ARISTAS 10
 
 typedef int vertice;
 
@@ -80,7 +81,7 @@ int main()
     ordenarAristas(aristas);
 
     printf("costo| u Arista v\n");
-    for (i = 0; i < 10; i++)
+    for (i = 0; i < ARISTAS; i++)
     {
         printf("  %d  | %d ------ %d \n", aristas[i].costo, aristas[i].u, aristas[i].v);
     }
@@ -90,25 +91,25 @@ int main()
     arista aristasResultante[10];
     aristasResultante[0] = aristas[0]; // Por defecto agregamos la arista de menor costo en 1er lugar.
 
-    // Primero ponemos los dos vertices del arista menos costoso
+    // Primero ponemos los dos vertices del arista menos costoso.
     int vertices[VERTICES] = {aristas[0].u, aristas[0].v};
-    int x = 2; // Contador de array vertices, la inicializamos en 2 porque ya se asignaron los dos primeros vertices de la arista menos costosa.
-    int r = 1; // Contador de array aristasResultante, la inicializamos en 1 porque ya fue añadida por defeco la arista de menor costo
+    int x = 2;         // Contador de array vertices, la inicializamos en 2 porque ya se asignaron los dos primeros vertices de la arista menos costosa.
+    int contArRes = 1; // Contador de array aristasResultante, la inicializamos en 1 porque ya fue añadida por defeco la arista de menor costo.
     int j;
 
     for (j = 0; j < lenghtAristas; j++)
     {
-        // condición: en aristasResultante agregamos el arista donde, unos de sus vertices no existe en la lista de vertices pero el otro si existe. 
+        // Condición: en aristasResultante agregamos el arista donde, unos de sus vertices no existe en la lista de vertices pero el otro si existe.
         if (existe(aristas[j].u, vertices) && !existe(aristas[j].v, vertices))
         {
             // ejemplo: aristas[j].u es 3 y dentro del vertices[] ya existe 1 y 3, entonces se agrega a vertices[], aristas[j].v que es 6 y no existe.
             vertices[x] = aristas[j].v; // Almacenamos en vertices a partir del indice 2 en adelante los vertices que cumplen la condicion.
             x++;                        // Incrementeamos la variable x una vez encontrado el vertice.
 
-            aristasResultante[r] = aristas[j]; // Almacenamos en arista resultante el resultado dado hasta el momento.
-            r++;
-            j = 0; // reiniciamos la busqueda en todo el array de aristas nuevamente
-            continue; // finaliza la iteración en curso, con j = 0 para que reinicien la busqueda
+            aristasResultante[contArRes] = aristas[j]; // Almacenamos en arista resultante el resultado dado hasta el momento.
+            contArRes++;
+            j = 0;    // Reiniciamos la busqueda en todo el array de aristas nuevamente.
+            continue; // Finaliza la iteración en curso, con j = 0 para que reinicien la busqueda.
         }
         else if (existe(aristas[j].v, vertices) && !existe(aristas[j].u, vertices)) // Si el vertice v de todas las aristas es igual a alguno de los vertices de todas las aristas y el otro vertice v no es igual.
         {
@@ -116,19 +117,17 @@ int main()
             vertices[x] = aristas[j].u; // Almacenamos en vertices a partir del indice 2 en adelante los vertices que cumplen la condicion.
             x++;
 
-            aristasResultante[r] = aristas[j];
-            r++;
-            j = 0; // reiniciamos la busqueda en todo el array de aristas nuevamente
-            continue;  //finaliza la iteración en curso, con j = 0 para que reinicien la busqueda
+            aristasResultante[contArRes] = aristas[j];
+            contArRes++;
+            j = 0;    // Reiniciamos la busqueda en todo el array de aristas nuevamente.
+            continue; // Finaliza la iteración en curso, con j = 0 para que reinicien la busqueda.
         }
     }
-
-    int tam_final = r; // r contiene la cantidad de aristas agregadas al árbol abarcador
 
     printf("Arbol abarcador de costo minimo:\n");
     printf("\n");
     printf("costo| u Arista v\n");
-    for (i = 0; i < tam_final; i++)
+    for (i = 0; i < contArRes; i++)
     {
 
         printf("  %d  | %d ------ %d \n", aristasResultante[i].costo, aristasResultante[i].u, aristasResultante[i].v);
@@ -137,15 +136,15 @@ int main()
 }
 
 // Declaracion de funciones.
-void ordenarAristas(arista aristas[])
+void ordenarAristas(arista *aristas)
 {
     int i;
     int j;
     arista aristaTemp; // Arista temporal que se utiliza para ordenar.
     // Ordenamos aristas de menor peso a mayor, osea de forma ascendente.
-    for (i = 0; i < 10; i++)
+    for (i = 0; i < ARISTAS; i++)
     {
-        for (j = i + 1; j < 10; j++)
+        for (j = i + 1; j < ARISTAS; j++)
         {
             if (aristas[i].costo > aristas[j].costo)
             {
@@ -160,7 +159,7 @@ void ordenarAristas(arista aristas[])
 bool existe(int n, int vertices[])
 {
     int i;
-    for (i = 0; i < 10; i++)
+    for (i = 0; i < VERTICES; i++)
     {
         if (vertices[i] == n)
         {
