@@ -3,8 +3,8 @@
 #include <string.h>
 #include <stdbool.h>
 
-#define VERTICES 6
-#define ARISTAS 10
+#define VERTICES 7
+#define ARISTAS 11
 
 typedef int vertice;
 
@@ -50,6 +50,7 @@ int main()
     agregarAristaAlGrafo(grafo1, 3, 6, 4, 7);
     agregarAristaAlGrafo(grafo1, 4, 6, 2, 8);
     agregarAristaAlGrafo(grafo1, 1, 3, 1, 9);
+    agregarAristaAlGrafo(grafo1, 7, 6, 7, 10);
 
     printf("costo| u Arista v");
 
@@ -83,7 +84,7 @@ int main()
     int j;
 
     int lenghtAristas = sizeof(grafo1->listaAristas) / sizeof(grafo1->listaAristas[0]);
-    for (j = 0; j < 10; j++)
+    for (j = 0; j < ARISTAS; j++)
     {
         // Condición: en aristasResultante agregamos la arista donde, unos de sus vertices no existe en la lista de vertices pero el otro si existe.
         if (existe(grafo1->listaAristas[j]->u, vertices) && !existe(grafo1->listaAristas[j]->v, vertices))
@@ -117,7 +118,7 @@ int main()
     printf("costo| u Arista v | indice \n");
     for (p = 0; p < contArRes; p++)
     {
-        printf("  %d  | %d ------ %d \n", aristasResultante[p]->costo, aristasResultante[p]->u, aristasResultante[p]->v);
+        printf("  %d  | %d ------ %d | %d  \n", aristasResultante[p]->costo, aristasResultante[p]->u, aristasResultante[p]->v, p);
     }
 
     int opcion = 0;
