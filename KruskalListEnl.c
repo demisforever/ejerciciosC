@@ -11,43 +11,40 @@ typedef struct _ARISTA
     vertice u;
     vertice v;
     int costo;
-    struct Arista *siguiente;
+    struct _ARISTA *siguiente[10];
 } Arista;
 
 // Estructura para representar el grafo
 typedef struct
 {
     int numVertices;
-    Arista *listaAristas[];
+    Arista *listaAristas[10];
 } Grafo;
-
 // Prototipo de funciones.
-void ordenarAristas(Arista aristas[]);
+void ordenarAristas(Arista *aristas[]);
 bool existe(int, int vertices[]);
+void armarArbol(Arista *aristasResultante[], int contArRes);
+void aristasRelacionadas(int numIndiceArista, Arista *aristasResultante[]);
 
 void agregarAristaAlGrafo(Grafo *grafo, int u, int v, int costo, int contArista)
 {
-    //printf("  %d  | %d ------ %d \n", u, v, costo);
-
     Arista *aristaTemp = (Arista *)malloc(sizeof(Arista));
     aristaTemp->costo = costo;
     aristaTemp->u = u;
     aristaTemp->v = v;
-    aristaTemp->siguiente = NULL;
+    aristaTemp->siguiente[0] = NULL;
     grafo->listaAristas[contArista] = aristaTemp;
-    //free(aristaTemp); //libero memoria
 }
 
 int main()
 {
-    //printf("Arbol completo:\n");
-    //printf("\n");
-    //printf("costo| u Arista v\n");
+    printf("Arbol completo:\n");
+    printf("\n");
 
     Grafo *grafo1 = (Grafo *)malloc(sizeof(Grafo));
-    //grafo1->numVertices = 6;
+    grafo1->numVertices = 6;
     grafo1->listaAristas[10];
-    //int contArista = 0;
+    // int contArista = 0;
     agregarAristaAlGrafo(grafo1, 1, 2, 6, 0);
     agregarAristaAlGrafo(grafo1, 1, 4, 5, 1);
     agregarAristaAlGrafo(grafo1, 4, 3, 5, 2);
@@ -61,89 +58,91 @@ int main()
 
     printf("costo| u Arista v\n");
 
-    // Arista *aristas[] = grafo1->listaAristas; //{arista1, arista2, arista3, arista4, arista5, arista6, arista7, arista8, arista9, arista10};
-    int i;
+    int p;
     // int lenghtAristas = sizeof(aristas) / sizeof(aristas[0]);
-    for (i = 0; i < 10; i++)
+    for (p = 0; p < 10; p++)
     {
-        printf("  %d  | %d ------ %d \n", grafo1->listaAristas[i]->costo, grafo1->listaAristas[i]->u, grafo1->listaAristas[i]->v);
+        printf("  %d  | %d ------ %d \n", grafo1->listaAristas[p]->costo, grafo1->listaAristas[p]->u, grafo1->listaAristas[p]->v);
     }
 
     printf("\n");
 
     printf("Ordenamos las aristas de menor costo a mayor costo, osea de forma ascendente:\n");
     printf("\n");
-    // ordenarAristas(aristas);
+    ordenarAristas(grafo1->listaAristas);
 
     printf("costo| u Arista v\n");
-    //for (i = 0; i < 10; i++)
-    //{
-        // printf("  %d  | %d ------ %d \n", aristas[i].costo, aristas[i].u, aristas[i].v);
-    //}
+    for (p = 0; p < 9; p++)
+    {
+        printf("  %d  | %d ------ %d \n", grafo1->listaAristas[p]->costo, grafo1->listaAristas[p]->u, grafo1->listaAristas[p]->v);
+    }
 
     printf("\n");
-    /*
-        Arista *aristasResultante[10];
-        aristasResultante[0] = aristas[0]; // Por defecto agregamos la arista de menor costo en 1er lugar.
 
-        // Primero ponemos los dos vertices del arista menos costoso
-        int vertices[VERTICES] = {aristas[0]->u, aristas[0]->v};
-        int x = 2; // Contador de array vertices, la inicializamos en 2 porque ya se asignaron los dos primeros vertices de la arista menos costosa.
-        int r = 1; // Contador de array aristasResultante, la inicializamos en 1 porque ya fue añadida por defeco la arista de menor costo
-        int j;
+    Arista *aristasResultante[10];
+    aristasResultante[0] = grafo1->listaAristas[0]; // Por defecto agregamos la arista de menor costo en 1er lugar.
 
-        for (j = 0; j < lenghtAristas; j++)
+    // Primero ponemos los dos vertices del arista menos costoso
+    int vertices[VERTICES] = {grafo1->listaAristas[0]->u, grafo1->listaAristas[0]->v};
+    int x = 2;         // Contador de array vertices, la inicializamos en 2 porque ya se asignaron los dos primeros vertices de la arista menos costosa.
+    int contArRes = 1; // Contador de array aristasResultante, la inicializamos en 1 porque ya fue añadida por defeco la arista de menor costo
+    int j;
+
+    int lenghtAristas = sizeof(grafo1->listaAristas) / sizeof(grafo1->listaAristas[0]);
+    for (j = 0; j < 10; j++)
+    {
+        // condición: en aristasResultante agregamos el arista donde, unos de sus vertices no existe en la lista de vertices pero el otro si existe.
+        if (existe(grafo1->listaAristas[j]->u, vertices) && !existe(grafo1->listaAristas[j]->v, vertices))
         {
-            // condición: en aristasResultante agregamos el arista donde, unos de sus vertices no existe en la lista de vertices pero el otro si existe.
-            if (existe(aristas[j]->u, vertices) && !existe(aristas[j]->v, vertices))
-            {
-                // ejemplo: aristas[j].u es 3 y dentro del vertices[] ya existe 1 y 3, entonces se agrega a vertices[], aristas[j].v que es 6 y no existe.
-                vertices[x] = aristas[j]->v; // Almacenamos en vertices a partir del indice 2 en adelante los vertices que cumplen la condicion.
-                x++;                         // Incrementeamos la variable x una vez encontrado el vertice.
+            // ejemplo: aristas[j].u es 3 y dentro del vertices[] ya existe 1 y 3, entonces se agrega a vertices[], aristas[j].v que es 6 y no existe.
+            vertices[x] = grafo1->listaAristas[j]->v; // Almacenamos en vertices a partir del indice 2 en adelante los vertices que cumplen la condicion.
+            x++;                                      // Incrementeamos la variable x una vez encontrado el vertice.
 
-                aristasResultante[r] = aristas[j]; // Almacenamos en arista resultante el resultado dado hasta el momento.
-                r++;
-                j = 0;    // reiniciamos la busqueda en todo el array de aristas nuevamente
-                continue; // finaliza la iteración en curso, con j = 0 para que reinicien la busqueda
-            }
-            else if (existe(aristas[j]->v, vertices) && !existe(aristas[j]->u, vertices)) // Si el vertice v de todas las aristas es igual a alguno de los vertices de todas las aristas y el otro vertice v no es igual.
-            {
-
-                vertices[x] = aristas[j]->u; // Almacenamos en vertices a partir del indice 2 en adelante los vertices que cumplen la condicion.
-                x++;
-
-                aristasResultante[r] = aristas[j];
-                r++;
-                j = 0;    // reiniciamos la busqueda en todo el array de aristas nuevamente
-                continue; // finaliza la iteración en curso, con j = 0 para que reinicien la busqueda
-            }
+            aristasResultante[contArRes] = grafo1->listaAristas[j]; // Almacenamos en arista resultante el resultado dado hasta el momento.
+            contArRes++;
+            j = 0;    // reiniciamos la busqueda en todo el array de aristas nuevamente
+            continue; // finaliza la iteración en curso, con j = 0 para que reinicien la busqueda
         }
-
-        int tam_final = r; // r contiene la cantidad de aristas agregadas al árbol abarcador
-
-        printf("Arbol abarcador de costo minimo:\n");
-        printf("\n");
-        printf("costo| u Arista v\n");
-        for (i = 0; i < tam_final; i++)
+        else if (existe(grafo1->listaAristas[j]->v, vertices) && !existe(grafo1->listaAristas[j]->u, vertices)) // Si el vertice v de todas las aristas es igual a alguno de los vertices de todas las aristas y el otro vertice v no es igual.
         {
 
-            printf("  %d  | %d ------ %d \n", aristasResultante[i]->costo, aristasResultante[i]->u, aristasResultante[i]->v);
-        }*/
+            vertices[x] = grafo1->listaAristas[j]->u; // Almacenamos en vertices a partir del indice 2 en adelante los vertices que cumplen la condicion.
+            x++;
+
+            aristasResultante[contArRes] = grafo1->listaAristas[j];
+            contArRes++;
+            j = 0;    // reiniciamos la busqueda en todo el array de aristas nuevamente
+            continue; // finaliza la iteración en curso, con j = 0 para que reinicien la busqueda
+        }
+    }
+
+    armarArbol(aristasResultante, contArRes);
+
+    printf("Arbol abarcador de costo minimo:\n");
+    printf("\n");
+    printf("costo| u Arista v\n");
+    for (p = 0; p < contArRes; p++)
+    {
+        printf("  %d  | %d ------ %d \n", aristasResultante[p]->costo, aristasResultante[p]->u, aristasResultante[p]->v);
+    }
+
+    aristasRelacionadas(2, aristasResultante);
+
     return 0;
 }
 
 // Declaracion de funciones.
-void ordenarAristas(Arista *aristas)
+void ordenarAristas(Arista *aristas[])
 {
     int i;
     int j;
-    Arista aristaTemp; // Arista temporal que se utiliza para ordenar.
+    Arista *aristaTemp;
     // Ordenamos aristas de menor peso a mayor, osea de forma ascendente.
     for (i = 0; i < 10; i++)
     {
         for (j = i + 1; j < 10; j++)
         {
-            if (aristas[i].costo > aristas[j].costo)
+            if (aristas[i]->costo > aristas[j]->costo)
             {
                 aristaTemp = aristas[i];
                 aristas[i] = aristas[j];
@@ -164,4 +163,50 @@ bool existe(int n, int vertices[])
         }
     }
     return false;
+}
+
+// usamos la lista enlasada de Arista para armar la unión del grafo
+void armarArbol(Arista *aristasResultante[], int contArRes)
+{
+    int i;
+    int j;
+    int cont = 0;
+    Arista *aristaTemp;
+
+    for (i = 0; i < contArRes; i++)
+    {
+        for (j = 0; j < contArRes - 1; j++)
+        {
+            if (i == j)
+            {
+                j++; // desfasamos i y j para que un arista no sea "hija" de si misma
+            }
+
+            if (aristasResultante[i]->u == aristasResultante[j]->u || aristasResultante[i]->u == aristasResultante[j]->v || aristasResultante[i]->v == aristasResultante[j]->u || aristasResultante[i]->v == aristasResultante[j]->v)
+            {
+                aristasResultante[i]->siguiente[cont] = aristasResultante[j];
+            }
+            else
+            {
+                aristasResultante[i]->siguiente[cont] = NULL;
+            }
+            cont++;
+        }
+        cont = 0;
+    }
+}
+
+// metodo para visualizar los "hijos" (aristas siguientes) relacionadas a partir de una arista
+void aristasRelacionadas(int numIndiceArista, Arista *aristasResultante[])
+{
+    printf("\n");
+    printf("costo| u Arista v\n");
+    printf("  %d  | %d ------ %d \n", aristasResultante[numIndiceArista]->costo, aristasResultante[numIndiceArista]->u, aristasResultante[numIndiceArista]->v);
+    printf("\n");
+    int longitud = sizeof(aristasResultante[numIndiceArista]->siguiente) / sizeof(aristasResultante[numIndiceArista]->siguiente[0]);
+    int i;
+    for (i = 0; i < longitud; i++)
+    {
+        printf("  %d  | %d ------ %d \n", aristasResultante[numIndiceArista]->siguiente[i]->costo, aristasResultante[numIndiceArista]->siguiente[i]->u, aristasResultante[numIndiceArista]->siguiente[i]->v);
+    }
 }
